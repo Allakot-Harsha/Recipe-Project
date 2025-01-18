@@ -1,11 +1,34 @@
 import React, { useState } from 'react'
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import { server } from '../server';
+import axios from "axios"
+import {Link, useNavigate} from "react-router-dom";
 
-function SignupComponent() {
+const SignupComponent=()=> {
     const [email,setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [fullname, setFullname] = useState("");
     const [visible, setVisible] = useState(false);
+    const navigate = useNavigate();
+    
+    const handleSubmit =(e)=>{
+        e.preventDefault();
+        const config ={
+            headers: {"Content-type" : "multipart/form-data"},
+        };
+        const newForm= new FormData();
+        newForm.append("name", fullname);
+        newForm.append("email",email);
+        newForm.append("password",password);
+        axios.post(`${server}/create-user`,newForm, config).then((res) => {
+            if (res.data.success === true){
+                navigate("/login");
+            }
+        })
+        .catch((err) => console.log(err));
+        
+        
+    }
   return (
     <div className='min-h-screen bg-emerald-200 flex flex-col justify-center py-12  sm:px-6 lg:px-8'>
         <div className="sm: mx-auto sm:w-full sm:max-w-md">
@@ -57,7 +80,7 @@ function SignupComponent() {
                     </div>
                     </div>
                     <button type='submit' className='group relative justify-center w-full h-[40px] flex py-2 px-4 border-transparent text-sm  font-medium
-                    rounded-md bg-orange-400 text-white hover:bg-orange-500'>Sign Me Up!</button>
+                    rounded-md bg-orange-400 text-white hover:bg-orange-500' onClick={handleSubmit}>Sign Me Up!</button>
                 </form>
             </div>
         </div>
