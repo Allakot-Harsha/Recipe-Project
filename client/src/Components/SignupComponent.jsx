@@ -3,6 +3,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { server } from '../server';
 import axios from "axios"
 import {Link, useNavigate} from "react-router-dom";
+import { toast } from 'react-toastify';
 
 const SignupComponent=()=> {
     const [email,setEmail] = useState("");
@@ -21,11 +22,13 @@ const SignupComponent=()=> {
         newForm.append("email",email);
         newForm.append("password",password);
         axios.post(`${server}/create-user`,newForm, config).then((res) => {
-            if (res.data.success === true){
-                navigate("/login");
-            }
+            toast.success(res.data.message);
+            setEmail("")
+            setFullname("")
+            setPassword("")
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {toast.error(err.message);
+        })
         
         
     }
@@ -58,7 +61,7 @@ const SignupComponent=()=> {
                             Password</label>
                             <div className='mt-1 relative'>
                                 <input className='appearance-none block w-full px-3 py-2 border-gray-300 rounded-md shadow-sm placeholder-gray-400 sm:text-sm '
-                                value={password} onChange={(e)=>setPassword(e.target.value)} type={visible?"text":"password"} name='password' required autoComplete='current-password' placeholder='Password'/>
+                                value={password} onChange={(e)=>{setPassword(e.target.value)}} type={visible?"text":"password"} name='password' required autoComplete='current-password' placeholder='Password'/>
                                 {
                                     visible ? (
                                     <AiOutlineEye 

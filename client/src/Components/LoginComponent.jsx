@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 import { AiOutlineEye } from "react-icons/ai";
 import { AiOutlineEyeInvisible } from "react-icons/ai";
+import axios from "axios";
+import { server } from '../server';
+import {toast}  from 'react-toastify';
+import {useNavigate} from "react-router-dom";
 
 
 
@@ -8,6 +12,28 @@ const LoginComponent = () => {
     const [email,setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [visible, setVisible] = useState(false);
+    const navigate = useNavigate();//we can only use Usenavigate with its instance, that's why we create instance
+
+    const handleSubmit = async(e)=>{
+        e.preventDefault();
+        console.log(email, password);
+        
+        await axios.post(`${server}/login-user`,{
+            email,
+            password,
+        },
+    {
+        withCredentials: true,
+    }).then((res)=>{
+        toast.success('login successfull');
+        //window.location.reload();//forcefully reloading the page
+        navigate("/");
+    }).catch((err)=>{
+        toast.error(err.message);
+        console.log(err);
+        
+    });
+    }
   return (
     <div className='min-h-screen bg-emerald-200 flex flex-col justify-center py-12  sm:px-6 lg:px-8'>
         <div className="sm: mx-auto sm:w-full sm:max-w-md">
@@ -15,7 +41,7 @@ const LoginComponent = () => {
         </div>
         <div className="mt-8 sm:w-full sm:mx-auto sm:max-w-md">
             <div className="bg-gray-700 py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                <form className='space-y-6'>
+                <form className='space-y-6' onSubmit={handleSubmit}>
                     <div>
                         <label className='block text-sm font-medium text-white' htmlFor='email'>
                             Email Address</label>
